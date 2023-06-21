@@ -1,0 +1,27 @@
+-- Query to analyze the total performance of campaigns
+CREATE VIEW marketing_analysis_view AS
+SELECT c.campaign_id, c.campaign_name,
+       COUNT(DISTINCT cl.user_id) AS total_unique_clicks,
+       COUNT(DISTINCT co.user_id) AS total_unique_conversions,
+       SUM(cs.cost_amount) AS total_cost,
+       COUNT(DISTINCT co.user_id) / COUNT(DISTINCT cl.user_id) AS conversion_rate,
+       SUM(cs.cost_amount) / COUNT(DISTINCT co.user_id) AS cost_per_conversion
+FROM Campaigns c
+LEFT JOIN Clicks cl ON c.campaign_id = cl.campaign_id
+LEFT JOIN Conversions co ON c.campaign_id = co.campaign_id
+LEFT JOIN Costs cs ON c.campaign_id = cs.campaign_id
+GROUP BY c.campaign_id, c.campaign_name;
+
+-- Query to calculate the mortgage values for the company
+CREATE VIEW mortgage_analysis_view AS
+SELECT l.loan_id, l.loan_amount, c.customer_name,
+       SUM(p.payment_amount) AS total_payments,
+       AVG(ir.interest_rate) AS average_interest_rate,
+       COUNT(p.payment_id) AS total_payments_count
+FROM Loans l
+LEFT JOIN Customers c ON l.customer_id = c.customer_id
+LEFT JOIN Payments p ON l.loan_id = p.loan_id
+LEFT JOIN Interest_Rates ir ON l.loan_date = ir.date
+GROUP BY l.loan_id, l.loan_amount, c.customer_name;
+
+

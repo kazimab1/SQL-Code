@@ -1,0 +1,75 @@
+-- Query to analyze the performance of campaigns over time
+SELECT
+    campaign,
+    DATE_TRUNC('month', date) AS month,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+WHERE
+    channel = 'Google Ads'
+GROUP BY
+    campaign,
+    DATE_TRUNC('month', date)
+ORDER BY
+    month;
+
+-- Query to analyze the impact of ad creatives on conversion rates
+SELECT
+    ad_creative,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate
+FROM
+    advertising_data
+WHERE
+    channel = 'Facebook Ads'
+    AND campaign = 'Summer Sale'
+GROUP BY
+    ad_creative
+ORDER BY
+    conversion_rate DESC;
+
+-- Query to identify the top-performing keywords in a search advertising campaign
+SELECT
+    keyword,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+WHERE
+    channel = 'Google Ads'
+    AND campaign = 'Search Campaign'
+GROUP BY
+    keyword
+HAVING
+    total_conversions > 10
+ORDER BY
+    conversion_rate DESC;
+
+-- Query to analyze the impact of ad placements on performance
+SELECT
+    ad_placement,
+    COUNT(*) AS impressions,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+WHERE
+    channel = 'LinkedIn Ads'
+GROUP BY
+    ad_placement
+ORDER BY
+    total_revenue DESC;

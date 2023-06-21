@@ -1,0 +1,71 @@
+-- Query to calculate performance metrics by advertising channel
+SELECT
+    channel,
+    COUNT(*) AS impressions,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+GROUP BY
+    channel;
+
+-- Query to identify underperforming campaigns in a specific channel
+SELECT
+    channel,
+    campaign,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+WHERE
+    channel = 'Google Ads'
+GROUP BY
+    channel,
+    campaign
+HAVING
+    conversion_rate < 0.05
+    AND total_cost > 1000;
+
+-- Query to analyze performance by target audience segment
+SELECT
+    segment,
+    COUNT(*) AS impressions,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+WHERE
+    channel = 'Facebook Ads'
+    AND campaign = 'Summer Sale'
+GROUP BY
+    segment;
+
+-- Query to compare performance across different advertising channels
+SELECT
+    channel,
+    SUM(clicks) AS total_clicks,
+    SUM(conversions) AS total_conversions,
+    SUM(conversions) / SUM(clicks) AS conversion_rate,
+    SUM(cost) AS total_cost,
+    SUM(revenue) AS total_revenue,
+    (SUM(revenue) - SUM(cost)) / SUM(cost) AS ROAS
+FROM
+    advertising_data
+WHERE
+    date BETWEEN '2023-01-01' AND '2023-12-31'
+GROUP BY
+    channel
+ORDER BY
+    total_revenue DESC;
